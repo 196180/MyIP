@@ -1,17 +1,21 @@
 # 🧰 MyIP - A Better IP Toolbox
 
-<img src="https://raw.githubusercontent.com/jason5ng32/MyIP/main/public/logo.svg" width="200">
+![IPCheck.ing Banner](https://raw.githubusercontent.com/jason5ng32/MyIP/main/public/gh_banner.png)
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/jason5ng32/MyIP)
 ![GitHub forks](https://img.shields.io/github/forks/jason5ng32/myip)
 ![Docker Pulls](https://img.shields.io/docker/pulls/jason5ng32/myip)
-![Website](https://img.shields.io/website?url=https%3A%2F%2Fipcheck.ing&up_message=online&label=IPCheck.ing)
-![PWA](https://img.shields.io/badge/PWA-Supported-blue)
 ![GitHub license](https://img.shields.io/github/license/jason5ng32/MyIP)
 
+![CodeQL](https://github.com/jason5ng32/MyIP/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)
+![Docker Build and Push](https://github.com/jason5ng32/MyIP/actions/workflows/docker-image.yml/badge.svg?branch=main)
+
+![PWA](https://img.shields.io/badge/PWA-Supported-blue)
 ![Windows-image](https://img.shields.io/badge/-Windows-blue?logo=windows)
 ![MacOS-image](https://img.shields.io/badge/-MacOS-black?logo=apple)
 ![Linux-image](https://img.shields.io/badge/-Linux-333?logo=ubuntu)
+
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fipcheck.ing&up_message=online&label=IPCheck.ing 'IPCheck.ing')](https://ipcheck.ing)
 
 🇺🇸 [English](README.md) | 🇨🇳 [简体中文](README_ZH.md) | 🇫🇷 [Français](README_FR.md)
 
@@ -24,7 +28,7 @@ Notes: You can use my demo for free, and you can also deploy it yourself.
 
 ## 👀 Main Features
 
-* 🖥️ **View Your IPs**: Detects and displays your local IP, sourcing from multiple IPv4 and IPv6 providers.
+* 🖥️ **View Your IPs**: Detects and displays your local IPs, sourcing from multiple IPv4 and IPv6 providers.
 * 🕵️ **IP Information**: Presents detailed information for all IP addresses, including country, region, ASN, geographic location, and more.
 * 🚦 **Availability Check**: Tests the accessibility of various websites, such as Google, GitHub, YouTube, ChatGPT, and others.
 * 🚥 **WebRTC Detection**: Identifies the IP address used during WebRTC connections.
@@ -33,6 +37,8 @@ Notes: You can use my demo for free, and you can also deploy it yourself.
 * 🚏 **Proxy Rule Testing**: Test the rule settings of proxy software to ensure their correctness.
 * 🌐 **Global Latency Test**: Performe lantency tests on servers located in different regions around the world.
 * 📡 **MTR Test**: Perform MTR tests on servers located in different regions around the world.
+* 🔦 **DNS Resolver**: Performs DNS resolution of a domain name from multiple sources and obtains real-time resolution results that can be used for contamination determination.
+* 🚧 **Censorship Check**: Check if a website is blocked in some countries.
 * 🌗 **Dark Mode**: Automatically toggles between dark and daylight modes based on system settings, with an option for manual switching.
 * 📱 **Minimalist Mode**: A mobile-optimized mode that shortens page length for quick access to essential information..
 * 🔍 **Search IP Information**: Provides a tool for querying information about any IP address.
@@ -96,9 +102,9 @@ You can use the program without adding any environment variables, but if you wan
 | `PORT` | No | `18966` | The port on which the program runs |
 | `BING_MAP_API_KEY` | No | `""` | API Key for Bing Maps, used to display the location of the IP on a map |
 | `ALLOWED_DOMAINS` | No | `""` | Allowed domains for access, separated by commas, used to prevent misuse of the backend API |
-| `IPChecking_API_KEY` | No | `""` | API Key for IPCheck.ing, used to obtain accurate IP geolocation information |
+| `IPCHECKING_API_KEY` | No | `""` | API Key for IPCheck.ing, used to obtain accurate IP geolocation information |
 | `IPINFO_API_TOKEN` | No | `""` | API Token for IPInfo.io, used to obtain IP geolocation information through IPInfo.io |
-| `KEYCDN_USER_AGENT` | No | `""` | User Agent for KeyCDN, used to obtain IP geolocation information through KeyCDN |
+| `KEYCDN_USER_AGENT` | No | `""` | The domain name when using KeyCDN, must contain https prefix. Used to obtain IP address information through KeyCDN |
 | `CLOUDFLARE_API` | No | `""` | API Key for Cloudflare, used to obtain AS system information through Cloudflare |
 | `VITE_RECAPTCHA_SITE_KEY` | No | `""` | Google reCAPTCHA's Site Key, used to display reCAPTCHA verification on the frontend |
 | `RECAPTCHA_SECRET_KEY` | No | `""` | Google reCAPTCHA's Secret Key, used to verify reCAPTCHA verification on the backend |
@@ -117,7 +123,7 @@ Modify `.env`, and for example, add the following:
 PORT=18966
 BING_MAP_API_KEY="YOUR_KEY_HERE"
 ALLOWED_DOMAINS="example.com"
-IPChecking_API="YOUR_KEY_HERE"
+IPCHECKING_API="YOUR_KEY_HERE"
 ```
 
 Then restart the backend service.
@@ -134,7 +140,7 @@ You can add environment variables when running Docker, for example:
 docker run -d -p 18966:18966 \
   -e BING_MAP_API_KEY="YOUR_KEY_HERE" \
   -e ALLOWED_DOMAINS="example.com" \
-  -e IPChecking_API="YOUR_TOKEN_HERE" \
+  -e IPCHECKING_API="YOUR_TOKEN_HERE" \
   --name myip \
   jason5ng32/myip:latest
 
@@ -149,11 +155,16 @@ If you're using a proxy for internet access, consider adding this rule to your p
 IP-CIDR,1.0.0.1/32,DIRECT,no-resolve
 IP-CIDR6,2606:4700:4700::1111/128,DIRECT,no-resolve
 DOMAIN-SUFFIX,ipify.org,Proxy
+# Rule Testing
+DOMAIN,ptest-1.ipcheck.ing,Proxy1
+DOMAIN,ptest-2.ipcheck.ing,Proxy2
+DOMAIN,ptest-3.ipcheck.ing,Proxy3
+DOMAIN,ptest-4.ipcheck.ing,Proxy4
+DOMAIN,ptest-5.ipcheck.ing,Proxy5
+DOMAIN,ptest-6.ipcheck.ing,Proxy6
+DOMAIN,ptest-7.ipcheck.ing,Proxy7
+DOMAIN,ptest-8.ipcheck.ing,Proxy8
 ```
-
-## 😶‍🌫️ Additional Notes
-
-70% of the code for this program was not written by me, but generated through ChatGPT. After about 90 rounds of back-and-forth and some minor manual adjustments, all the code was completed.
 
 ## 🌟 Star History
 

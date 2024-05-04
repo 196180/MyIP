@@ -10,15 +10,14 @@
 
     <div id="about" class="text-center mb-2">
       <a class="link link-underline-offset link-underline-opacity-0" :class="[isDarkMode ? 'link-info' : 'link-dark']"
-        data-bs-toggle="offcanvas" href="#About" role="button" aria-controls="About"
-        @click="$trackEvent('Footer', 'FooterClick', 'About');">
+        role="button" aria-controls="About" @click.prevent="openAbout">
         {{ $t('about.Title') }} <i class="bi bi-arrow-left-circle-fill"></i>
       </a>
     </div>
 
 
-    <div class="offcanvas offcanvas-end mt-5" :class="[isMobile ? ' w-100' : '']" tabindex="-1" id="About"
-      aria-labelledby="AboutLabel" :data-bs-theme="isDarkMode ? 'dark' : 'light'">
+    <div class="offcanvas offcanvas-end mt-5 border-0 h-100" :class="[isMobile ? ' w-100' : '']" tabindex="-1"
+      id="About" aria-labelledby="AboutLabel" :data-bs-theme="isDarkMode ? 'dark' : 'light'">
       <div class="offcanvas-header mt-3">
         <div class="btn-group" role="group">
           <button type="button" class="btn" @click="toggleContent('about')"
@@ -88,19 +87,24 @@
 
             <div v-for="(item, idx) in version.content" :key="idx" class="pb-1 ">
               <span v-if="item.type === 'add'" class="badge  rounded-pill bg-success fw-normal ">{{ $t('changelog.add')
-              }}</span>
+                }}</span>
               <span v-else-if="item.type === 'improve'" class="badge rounded-pill bg-info fw-normal">{{
                 $t('changelog.improve') }}</span>
-              <span v-else-if="item.type === 'fix'" class="badge  rounded-pill bg-danger fw-normal">{{ $t('changelog.fix')
-              }}</span>
+              <span v-else-if="item.type === 'fix'" class="badge  rounded-pill bg-danger fw-normal">{{
+                $t('changelog.fix')
+                }}</span>
               <span class="mx-2">{{ item.change }}</span>
             </div>
           </div>
         </div>
+
+        <div id="offcanvasPlaceholder mb-5" class="jn-placeholder mb-5">
+        </div>
+
       </div>
     </div>
 
-    <div id="copyright" v-if="!siteValidate">
+    <div id="copyright" v-if="!configs.originalSite">
       <p class="text-center fs-6 fw-light" style="opacity: 0.5;">
         {{ $t('page.copyRightName') }} <a :href="$t('page.copyRightLink')" class="link-underline-light" target="_blank"
           :class="[isDarkMode ? 'dark-mode link-light' : 'link-dark']">{{ $t('page.copyRightLinkName') }}</a>
@@ -112,6 +116,7 @@
 <script>
 import { ref, computed, watch } from 'vue';
 import { useStore } from 'vuex';
+import { Offcanvas } from 'bootstrap';
 import '@khmyznikov/pwa-install';
 
 export default {
@@ -122,19 +127,12 @@ export default {
     const store = useStore();
     const isDarkMode = computed(() => store.state.isDarkMode);
     const isMobile = computed(() => store.state.isMobile);
-    const siteVal = computed(() => store.state.siteValidate);
-    const siteValidate = ref(true);
-
-    // 监控 siteVal 的变化
-    watch(siteVal, (newVal) => {
-      siteValidate.value = newVal;
-    });
-
+    const configs = computed(() => store.state.configs);
 
     return {
       isDarkMode,
       isMobile,
-      siteValidate,
+      configs,
     };
   },
 
@@ -146,6 +144,18 @@ export default {
     }
   },
   methods: {
+    openAbout() {
+      var offcanvasElement = document.getElementById('About');
+      var offcanvas = Offcanvas.getInstance(offcanvasElement) || new Offcanvas(offcanvasElement);
+      if (offcanvasElement.classList.contains('show')) {
+        offcanvas.hide();
+      } else {
+        offcanvas.show();
+      }
+
+      this.$trackEvent('Footer', 'FooterClick', 'About');
+
+    },
     toggleContent(contentType) {
       this.showAbout = contentType === 'about';
       this.showChanglog = contentType === 'changlog';
@@ -158,5 +168,9 @@ export default {
 <style scoped>
 #About {
   z-index: 1051;
+}
+
+.jn-placeholder {
+  height: 20pt;
 }
 </style>
